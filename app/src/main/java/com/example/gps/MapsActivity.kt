@@ -3,6 +3,17 @@ package com.example.gps
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
+import com.example.gps.Coordenadas.Monticulo
+import com.example.gps.Coordenadas.ValleDeLaLuna
+import com.example.gps.Coordenadas.Zoologico
+import com.example.gps.Coordenadas.canchaVenus
+import com.example.gps.Coordenadas.casa
+import com.example.gps.Coordenadas.casaJhere
+import com.example.gps.Coordenadas.parke
+import com.example.gps.Coordenadas.salchisalvaje
+import com.example.gps.Coordenadas.stadium
+import com.example.gps.Coordenadas.univalle
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -11,6 +22,9 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.example.gps.databinding.ActivityMapsBinding
+import com.google.android.gms.maps.model.CameraPosition
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -70,9 +84,55 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .snippet("${tokyo.latitude},{${tokyo.longitude}}"))
         //concepto numero 3 es posicionar la camara en la ubicacion de
         //preferencia
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(tokyo,20f))
+        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(tokyo,20f))
+        /**
+         * Configuracion de su camera personalizada
+        **/
 
 
+
+        val camaraPersonalizada= CameraPosition.Builder()
+            .target(univalle)//esto es donde apunta la camara
+            .zoom(16f) // es el zoom personalizado 15 y 20 es generalmente para calles 20 es para edificios
+            .tilt(80f) //es el Angulo de la inclinacion de la camara y no hay que ser agresivos, no se puede poder angulos tan agresivos
+            .bearing(220f)// cambio de orientacion de 0 a 360
+            .build()
+
+       //mMap.moveCamera(CameraUpdateFactory.newCameraPosition(camaraPersonalizada))
+        /**
+         *Movimiento de la camara (animacion de la camara)
+         * Plus--- uso standar de corrutinas
+         */
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(univalle,17f))
+        //Corrutinas para apreciar mejor el movimiento
+        lifecycleScope.launch{
+            delay(5000)
+            //Para mover la camara entre puntos en el mapa
+            //les recomiendo usar una animacion que haga una transicion
+            //de movimiento ... se usa el metodo
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(casaJhere,20f))
+            delay(5000)
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(stadium,20f))
+            delay(5000)
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(ValleDeLaLuna,20f))
+            delay(5000)
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(salchisalvaje,20f))
+            delay(5000)
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(Zoologico,20f))
+            delay(5000)
+            //
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(canchaVenus,20f))
+            delay(5000)
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(canchaVenus,20f))
+            delay(5000)
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(Monticulo,20f))
+            delay(5000)
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(parke,20f))
+            delay(5000)
+            mMap.addMarker(MarkerOptions().position(casa).title("mi destino final").draggable(true))
+
+        }
         //Evento de click sobre el mapa
         mMap.setOnMapClickListener {
             if(contador<5){
@@ -81,57 +141,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }else{
                 Toast.makeText(this,"numero de marcadores maximos",Toast.LENGTH_SHORT).show()
             }
-            /*
+            /**
             * Configuracion de controles de Ui
             * y Gestures del mapa
             * */
+
             mMap.uiSettings.apply {
                 isZoomControlsEnabled=true // controles de zoom
                 isCompassEnabled=true// habilita el compas de la orientacion
                 isMapToolbarEnabled=true// botones complementarios del mapa
 
             }
-            //mMap.moveCamera(CameraUpdateFactory.newLatLng(it))
-            /*
-        mMap.apply{
-        setMinZoomPreference(14f)
-        setMaxZoomPreference(18f)
-        }
-        */
-
-            /*
-             // Add a marker in Sydney and move the camera
-            val sydney = LatLng(-34.0, 151.0)
-            mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
-            */
-            /*
-             mMap.addMarker(MarkerOptions().position(Monticulo).title("Marker in Monticulo").draggable(true))
-            mMap.addMarker(MarkerOptions().position(ValleDeLaLuna).title("Marker in Valle de la Luna").draggable(true))
-            mMap.addMarker(MarkerOptions().position(Zoologico).title("Marker in Zoologico").draggable(true))
-            mMap.addMarker(MarkerOptions().position(univalle).title("Marker in univalle").draggable(true))
 
 
-            val cameraUnivalle = CameraPosition.builder()
-                .bearing(240f)
-                .tilt(75f)
-                .zoom(16f)
-                .target(univalle)
-                .build()
-            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraUnivalle))
-
-            lifecycleScope.launch{
-                delay(5000)
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(Monticulo,20f))
-                delay(7000)
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(Monticulo,20f))
-            }
-            mMap.setOnMapClickListener {
-
-                mMap.addMarker(MarkerOptions().position(it).title("Mi nueva posicion").snippet("${it.latitude}, ${it.longitude}"))
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(it))
-            }
-            */
         }
 
     }
