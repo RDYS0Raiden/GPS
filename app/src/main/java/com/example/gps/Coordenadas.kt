@@ -14,4 +14,8 @@ object Coordenadas {
     val Monticulo = LatLng(-16.51349829414857, -68.12702977334712)
     val parke=LatLng(-16.519928677963563, -68.10461918402625)
     val casa=LatLng(-16.520750371695552, -68.10454700930822)
+    //
+    val plazaAvaroa=LatLng(-16.510939273452045, -68.12660492260613)
+    val cementeriojudios=LatLng(-16.49686691460004, -68.11263597860815)
+    val punto0Lapaz=LatLng(-16.488540528518147, -68.11949001714535)
 }
