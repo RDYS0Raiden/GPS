@@ -1,9 +1,15 @@
 package com.example.gps
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.gps.Coordenadas.Monticulo
 import com.example.gps.Coordenadas.ValleDeLaLuna
@@ -26,6 +32,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.example.gps.databinding.ActivityMapsBinding
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLngBounds
 import kotlinx.coroutines.delay
@@ -37,7 +44,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMapsBinding
     private var contador=0;
 
-
+    private val PERMISSION_ID = 42
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -157,7 +164,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.setLatLngBoundsForCameraTarget(univalleBounds)
         //Activar la posicion actual en el mapa
         //Evaluar permisisos de GPS.....
-        mMap.isMyLocationEnabled=true
+
+
+            if (hasGPSEnabled()){
+                if (allPermissionsGrnated()){
+                    mMap.isMyLocationEnabled=true
+                }
+                else
+                {
+                    requestPermissionUser()
+                }
+            }else{ goToEnableGPS() }
+
 
 
         //Evento de click sobre el mapa
@@ -184,10 +202,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 delay(500)
             }
 */
-
-
-
-
             mMap.uiSettings.apply {
                 isMyLocationButtonEnabled=true// esto activa el botton para posicionar al centro del mapa
                 isZoomControlsEnabled=true // controles de zoom
@@ -200,5 +214,38 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
         }
+    private fun goToEnableGPS() {
+        startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+    }
 
+    private fun hasGPSEnabled():Boolean {
+        //Manager: es el que lleva la batuta o es el que orgranizagestiona
+        // lo referido al manejo de ciertos sevicios o recurso
+        val locationManager : LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager //esta es la libreria para la localizacion
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    }
+    private fun allPermissionsGrnated():Boolean =
+        MainActivity.PERMISSION_GRANTED.all{
+            ActivityCompat.
+            checkSelfPermission(baseContext, it) == //por que el contexto por que no puede ser this, pues por que stamos dentro de un mabito anonimo o flecha
+                    PackageManager.PERMISSION_GRANTED
+        }
+    /*
+    private fun checkPermission():Boolean{
+        return ActivityCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    }
+    */
+
+    private fun requestPermissionUser(){
+        //Lanzar la ventana al usuario para solicitarle que habilite el permisos o los deniegue
+
+        //to_do lo que tiene que ver con revisar permisso se enuentra aca ActivitiCompact
+        ActivityCompat.requestPermissions(
+            this,
+            MainActivity.PERMISSION_GRANTED, //no se pone una lista por que como requerimiento dice que necesita u array y no una lista
+            PERMISSION_ID //42 por que es el codigo de acceso
+        )
+    }
     }
