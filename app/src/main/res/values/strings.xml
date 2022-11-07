@@ -9,5 +9,7 @@
     <string name="dialog_button_deny">Denegar</string>
     <string name="btnCoordenadas">"este  boton onbtien coordendas "</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="btn_Localizacion">activar localizacion</string>
+    <string name="btn_normal">normal</string>
 
 </resources>
