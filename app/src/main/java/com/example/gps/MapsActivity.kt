@@ -35,7 +35,7 @@ import com.google.android.gms.maps.model.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
@@ -56,6 +56,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         //este parametro necesita una funcion de orden superior
         mapFragment.getMapAsync(this)//en este apartado se podria usar la funcion anonima
+        //Activar evento listener de conjunto de botones
+        setupToggleButtons()
     }
 
     /**
@@ -214,7 +216,49 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
              */
 
             mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this,R.raw.map_style))
+        /**
+         * configuracion y personalizacion de marcodores
+         * estilos formas y eventos
+         * */
+        val univalleMarcador=mMap.addMarker(
+            MarkerOptions().title("mi universidad").position(univalle)
+        )
+        univalleMarcador?.run{
+            //setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))//cambio de color de los colores definidos por defecto
+            //setIcon(BitmapDescriptorFactory.defaultMarker(150f))//cambio de color personalizado
+            //setIcon(BitmapDescriptorFactory.fromResource(R.drawable.zapatos_de_mujer))//con un icono personalizado con imagen
+            /*
+            Utils.getBitmapFromVector(this@MapsActivity,R.drawable.ic_thumb_up_32)?.let{
+                setIcon(BitmapDescriptorFactory.fromBitmap(it))
+            }//Marcador personalizado a partir de imagenes vectoriales de la libreria de android
+            */
+
+            setIcon(BitmapDescriptorFactory.fromResource(R.drawable.zapatos_de_mujer))//si quieres usar las imagenes de por defecto descomentar la parte de arriba
+            rotation= 145f
+            setAnchor(0.5f,0.5f)//punto de rotacion central
+            isFlat=true// el marcador rota o no con el mapa
+            isDraggable=true// se puede arrastrar el marcador
+            snippet="texto alternativo"
+
+
         }
+        //evento en markers
+        mMap.setOnMarkerClickListener(this)
+        }
+
+    private fun setupToggleButtons(){
+        binding.toggleGroup.addOnButtonCheckedListener {
+                group, checkedId, isChecked ->  if(isChecked){
+            mMap.mapType = when(checkedId){
+                R.id.btnNormal -> GoogleMap.MAP_TYPE_NORMAL
+                R.id.btnHibrido -> GoogleMap.MAP_TYPE_HYBRID
+                R.id.btnSatelital -> GoogleMap.MAP_TYPE_SATELLITE
+                R.id.btnTerreno -> GoogleMap.MAP_TYPE_TERRAIN
+                else -> GoogleMap.MAP_TYPE_NONE
+            }
+        }
+        }
+    }
     private fun goToEnableGPS() {
         startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
     }
@@ -249,4 +293,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             PERMISSION_ID //42 por que es el codigo de acceso
         )
     }
+
+    override fun onMarkerClick(marker: Marker): Boolean {
+      //marker es el marcador al que le has hecho click
+        Toast.makeText(this,"${marker.position.latitude},${marker.position.longitude}",
+        Toast.LENGTH_LONG).show()
+        return false
     }
+
+}
