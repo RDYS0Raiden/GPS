@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
@@ -35,7 +37,8 @@ import com.google.android.gms.maps.model.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener,
+    GoogleMap.OnMarkerDragListener {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
@@ -144,6 +147,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             mMap.addMarker(MarkerOptions().position(casa).title("mi destino final").draggable(true))
         }
 */
+
         /**
          * Bounds para delimitar areas de accion
          * en el mapa, armar sesgos.
@@ -159,9 +163,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(univalleBounds.center,18f))
         }
 
-        //Como delimitar el area
-        mMap.setLatLngBoundsForCameraTarget(univalleBounds)
+        //Como delimitar el area de la zona
+
+        //mMap.setLatLngBoundsForCameraTarget(univalleBounds)
+
         //Activar la posicion actual en el mapa
+
         //Evaluar permisisos de GPS.....
 
 
@@ -240,11 +247,43 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             isDraggable=true// se puede arrastrar el marcador
             snippet="texto alternativo"
 
-
         }
         //evento en markers
         mMap.setOnMarkerClickListener(this)
+        mMap.setOnMarkerDragListener(this)
+        /**
+         * trazado de rutas
+         * partiendo de dibujar lineas en el mapa
+         * entre puntos de coordenadas
+         * (Polyline)
+         */
+        setupPolyline()
         }
+        //Dibuja una linea  en el mapa
+    private fun setupPolyline() {
+        //de tener una ruta en formato de array o lista
+        val miRuta= mutableListOf(univalle,stadium,cementeriojudios,salchisalvaje,ValleDeLaLuna,canchaVenus,Monticulo,Zoologico,parke)
+            //se configura y crea la linea
+            val polyline=mMap.addPolyline(PolylineOptions()
+                .color(Color.YELLOW)//color de la linea
+                .width(12f)// define ancho de la linea
+                .clickable(true)// permite que la linea le puedas hacer click
+                .geodesic(true)//define la linea repetando la curvatura de la tierra
+                )
+            //tienes que indicar los puntos los que se van a dibujar
+            polyline.points=miRuta
+            lifecycleScope.launch(){
+                val misRutas = mutableListOf<LatLng>()
+                for (punto in miRuta) {
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(punto,20f))
+                    misRutas.add(punto)
+                    polyline.points = misRutas
+                    delay(2_000)
+
+                   //
+                }
+            }
+    }
 
     private fun setupToggleButtons(){
         binding.toggleGroup.addOnButtonCheckedListener {
@@ -299,6 +338,25 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         Toast.makeText(this,"${marker.position.latitude},${marker.position.longitude}",
         Toast.LENGTH_LONG).show()
         return false
+    }
+    // dice cuando el marcador esta siendo arrastrando por el mapa
+    override fun onMarkerDrag(marker: Marker) {
+        //marker : el marcador que estas arrastrando
+        binding.toggleGroup.visibility= View.INVISIBLE
+        marker.alpha=0.4f
+    }
+    // cuando se suelta el marcador luego de haberlo arrastrado
+    override fun onMarkerDragEnd(marker: Marker) {
+        binding.toggleGroup.visibility=View.VISIBLE
+        marker.alpha=1.0f
+        //sirve para desplegar la ventana de informacion
+        //llamada infoWindow
+        marker.showInfoWindow()
+    }
+    //esto es cuando esta empezando a ser arrastrado el marcador
+    override fun onMarkerDragStart(marker: Marker) {
+        //ocultar la ventana de informacion
+        marker.hideInfoWindow()
     }
 
 }

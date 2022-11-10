@@ -1,11 +1,12 @@
 package com.example.gps
 
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.delay
 
 object Coordenadas {
     val univalle= LatLng(-16.50319343070201, -68.1199637732108)
     val stadium=LatLng (-16.499188286313913, -68.12266175971754)
-    val ValleDeLaLuna = LatLng(-16.56712776954391, -68.0939939328733)
+    val ValleDeLaLuna =LatLng(-16.56712776954391,-68.0939939328733)
     val casaJhere=LatLng(-16.525105732352724, -68.23411724437474)
     val salchisalvaje=LatLng(-16.501240500161735, -68.12246327511347)
     //
