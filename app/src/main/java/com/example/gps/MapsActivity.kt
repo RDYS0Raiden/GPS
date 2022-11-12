@@ -241,7 +241,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             }//Marcador personalizado a partir de imagenes vectoriales de la libreria de android
             */
 
-            setIcon(BitmapDescriptorFactory.fromResource(R.drawable.zapatos_de_mujer))//si quieres usar las imagenes de por defecto descomentar la parte de arriba
+            setIcon(BitmapDescriptorFactory.fromResource(R.drawable.shop))//si quieres usar las imagenes de por defecto descomentar la parte de arriba
             rotation= 145f
             setAnchor(0.5f,0.5f)//punto de rotacion central
             isFlat=true// el marcador rota o no con el mapa
