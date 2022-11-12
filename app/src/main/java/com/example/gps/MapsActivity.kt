@@ -227,6 +227,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
          * configuracion y personalizacion de marcodores
          * estilos formas y eventos
          * */
+
         val univalleMarcador=mMap.addMarker(
             MarkerOptions().title("mi universidad").position(univalle)
         )
@@ -245,9 +246,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             setAnchor(0.5f,0.5f)//punto de rotacion central
             isFlat=true// el marcador rota o no con el mapa
             isDraggable=true// se puede arrastrar el marcador
-            snippet="texto alternativo"
+            snippet="Carrera de ingeniria de sistemas"
+            univalle.longitude
+            univalle.latitude
+
 
         }
+
         //evento en markers
         mMap.setOnMarkerClickListener(this)
         mMap.setOnMarkerDragListener(this)
@@ -272,6 +277,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 )
             //tienes que indicar los puntos los que se van a dibujar
             polyline.points=miRuta
+            /*
             lifecycleScope.launch(){
                 val misRutas = mutableListOf<LatLng>()
                 for (punto in miRuta) {
@@ -283,6 +289,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                    //
                 }
             }
+
+             */
     }
 
     private fun setupToggleButtons(){
@@ -335,9 +343,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
     override fun onMarkerClick(marker: Marker): Boolean {
       //marker es el marcador al que le has hecho click
+
+        mMap.setInfoWindowAdapter(InfoWndowAdapter(this))
+        /*
         Toast.makeText(this,"${marker.position.latitude},${marker.position.longitude}",
         Toast.LENGTH_LONG).show()
+*/
         return false
+
     }
     // dice cuando el marcador esta siendo arrastrando por el mapa
     override fun onMarkerDrag(marker: Marker) {
