@@ -297,6 +297,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 //2)que la linea sea dibujada por puntos separados por un espacio
                 //3) segmentos de linea separados por espacion o guiones
                 polyline.pattern= listOf(Dot(),Gap(32f),Dash(32f),Gap(32f))
+            //funciona
             }
 
 
