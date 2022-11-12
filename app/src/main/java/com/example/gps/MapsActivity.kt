@@ -279,7 +279,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 )
             //tienes que indicar los puntos los que se van a dibujar
             polyline.points=miRuta
-            /*
+
             lifecycleScope.launch(){
                 val misRutas = mutableListOf<LatLng>()
                 for (punto in miRuta) {
@@ -290,9 +290,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
                    //
                 }
+                //configurar al interseccion o union de lineas
+                polyline.jointType=JointType.BEVEL
+                //Personalizar el patron de la linea
+                //1)Linea continua por defecto
+                //2)que la linea sea dibujada por puntos separados por un espacio
+                //3) segmentos de linea separados por espacion o guiones
+                polyline.pattern= listOf(Dot(),Gap(32f),Dash(32f),Gap(32f))
             }
 
-             */
+
     }
 
     private fun setupToggleButtons(){
