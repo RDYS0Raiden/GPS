@@ -246,9 +246,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             setAnchor(0.5f,0.5f)//punto de rotacion central
             isFlat=true// el marcador rota o no con el mapa
             isDraggable=true// se puede arrastrar el marcador
-            snippet="Carrera de ingeniria de sistemas"
-            univalle.longitude
-            univalle.latitude
+            snippet="""
+                Carrera de ingeniria de sistemas
+                ${univalle.longitude},${univalle.latitude}
+            """.trimIndent()
+
 
 
         }
